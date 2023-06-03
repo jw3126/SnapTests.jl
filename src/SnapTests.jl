@@ -1,5 +1,6 @@
 module SnapTests
 using ArgCheck
+import DeepDiffs
 
 function matchsnap(snap, value; kw...)
     cmp = cmpfun(snap, value)
@@ -96,6 +97,9 @@ function load(snap::AbstractString, value)
 end
 function cmpfun(snap, value)
     isequal
+end
+function diff(snap, snap_value, value)
+    DeepDiffs.deepdiff(snap_value, value)
 end
 
 end
