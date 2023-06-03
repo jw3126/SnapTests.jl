@@ -9,11 +9,17 @@ function matchsnap(snap, value; kw...)
     matchsnap(cmp, snap, value; kw...)
 end
 
+const ALLOWED_ON_LOAD_ERROR          = (:error, :replace)
+const ALLOWED_ON_CMP_ERROR           = (:error, :replace)
+const ALLOWED_ON_CMP_FALSE           = (:ask, :replace, :return)
+const ALLOWED_ON_SNAP_DOES_NOT_EXIST = (:ask, :save, :error)
+
 on_snap_does_not_exist::Symbol = :save
 on_cmp_error::Symbol           = :error
 on_cmp_false::Symbol           = :return
 on_load_error::Symbol          = :error
 verbose::Bool                  = true
+
 function matchsnap(cmp, snap, value; kw...)
     options = resolve_options(snap; kw...)
     (;on_cmp_error, on_cmp_false, on_load_error, on_snap_does_not_exist, verbose) = options
@@ -141,11 +147,6 @@ function ask_stdin(question::AbstractString, choices)
         end
     end
 end
-
-const ALLOWED_ON_LOAD_ERROR          = (:error, :replace)
-const ALLOWED_ON_CMP_ERROR           = (:error, :replace)
-const ALLOWED_ON_CMP_FALSE           = (:ask, :replace, :return)
-const ALLOWED_ON_SNAP_DOES_NOT_EXIST = (:ask, :save, :error)
 
 function get_global_options()
     @argcheck on_load_error in ALLOWED_ON_LOAD_ERROR
