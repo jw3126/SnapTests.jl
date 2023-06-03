@@ -16,17 +16,17 @@ end
 
     @test !ispath(path1)
     @test !ispath(path2)
-    @test matchsnap(path1, value1)
+    @test matchsnap(path1, value1, verbose=false)
     @test isfile(path1)
-    @test matchsnap(path2, value2, on_snap_does_not_exist=:save)
+    @test matchsnap(path2, value2, on_snap_does_not_exist=:save, verbose=false)
     @test isfile(path2)
     @test matchsnap(path1, value1)
-    @test !matchsnap(path1, value2)
+    @test !matchsnap(path1, value2, verbose=false)
     @test matchsnap(Returns(true), path1, value2)
-    @test !matchsnap(Returns(false), path1, value1)
+    @test !matchsnap(Returns(false), path1, value1, verbose=false)
     @test matchsnap(path2, value2)
     @test matchsnap(path1, value1, on_snap_does_not_exist=:error)
-    @test !matchsnap(path1, value2, on_snap_does_not_exist=:error)
+    @test !matchsnap(path1, value2, on_snap_does_not_exist=:error, verbose=false)
     @test_throws "on_snap_does_not_exist in" matchsnap(path1, value1, on_snap_does_not_exist=:nonsense)
     @test_throws "on_cmp_error in" matchsnap(path1, value1, on_cmp_error=:nonsense)
     @test_throws "on_cmp_false in" matchsnap(path1, value1, on_cmp_false=:nonsense)
@@ -45,6 +45,9 @@ function SnapTests.save(l::Lookup, value)
 end
 function SnapTests.exists(l::Lookup, value)
     haskey(l.dict, l.key)
+end
+function SnapTests.default_options(l::Lookup)
+    (;verbose=false)
 end
 
 @testset "Customization" begin
