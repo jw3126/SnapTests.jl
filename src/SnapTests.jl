@@ -14,10 +14,26 @@ const ALLOWED_ON_CMP_ERROR           = (:error, :replace)
 const ALLOWED_ON_CMP_FALSE           = (:ask, :replace, :return)
 const ALLOWED_ON_SNAP_DOES_NOT_EXIST = (:ask, :save, :error)
 
+"""
+Allowed values: $ALLOWED_ON_SNAP_DOES_NOT_EXIST
+"""
 on_snap_does_not_exist::Symbol = :save
+
+"""
+Allowed values: $ALLOWED_ON_CMP_ERROR
+"""
 on_cmp_error::Symbol           = :error
+
+"""
+Allowed values: $ALLOWED_ON_CMP_FALSE
+"""
 on_cmp_false::Symbol           = :return
+
+"""
+Allowed values: $ALLOWED_ON_LOAD_ERROR
+"""
 on_load_error::Symbol          = :error
+
 verbose::Bool                  = true
 
 function matchsnap(cmp, snap, value; kw...)
