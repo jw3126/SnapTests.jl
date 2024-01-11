@@ -19,6 +19,7 @@ write(path, "hello world")
 
 SnapTests.on_cmp_false = :ask     # ask to update data on disk if test fails
 SnapTests.on_cmp_false = :replace # silently replace data on disk if test fails
+SnapTests.on_cmp_false = :return  # default, matchsnap will just return false
 
 # Customization
 # Lets customize test so that instead of loading from disk, stuff gets looked up from a database
