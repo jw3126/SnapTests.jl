@@ -38,7 +38,12 @@ verbose::Bool                  = true
 
 function matchsnap(cmp, snap, value; kw...)
     options = resolve_options(snap; kw...)
-    (;on_cmp_error, on_cmp_false, on_load_error, on_snap_does_not_exist, verbose) = options
+    (;on_cmp_error, on_cmp_false, on_load_error, on_snap_does_not_exist, verbose,
+        load,
+        save,
+        exists,
+        renderdiff,
+    ) = options
     @argcheck on_load_error in ALLOWED_ON_LOAD_ERROR
     @argcheck on_cmp_error in ALLOWED_ON_CMP_ERROR
     @argcheck on_cmp_false in ALLOWED_ON_CMP_FALSE
@@ -169,7 +174,12 @@ function get_global_options()
     @argcheck on_cmp_error in ALLOWED_ON_CMP_ERROR
     @argcheck on_cmp_false in ALLOWED_ON_CMP_FALSE
     @argcheck on_snap_does_not_exist in ALLOWED_ON_SNAP_DOES_NOT_EXIST
-    (;on_snap_does_not_exist,on_cmp_error,on_cmp_false,on_load_error,verbose)
+    (;on_snap_does_not_exist,on_cmp_error,on_cmp_false,on_load_error,verbose,
+        load,
+        save,
+        exists,
+        renderdiff,
+    )
 end
 
 function resolve_options(snap; kw...)::NamedTuple

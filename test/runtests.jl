@@ -65,6 +65,26 @@ end
     @test d == Dict(:key1 => 1, :key2 => 42)
 end
 
+@testset "Customization 2" begin
+    d = Dict()
+    options = (
+        save = (key::Symbol, value) -> (d[key] = value;),
+        load = (key::Symbol, value) -> d[key],
+        exists = (key::Symbol,value) -> haskey(d, key),
+    )
+    @test matchsnap(:key1, 1; options...)
+    @test d == Dict(:key1 => 1)
+    @test !matchsnap(:key1, 2; options...)
+    @test d == Dict(:key1 => 1)
+    @test matchsnap(:key1, 1; on_snap_does_not_exist=:error, options...)
+    @test matchsnap(:key1, 1; on_snap_does_not_exist=:error, on_cmp_false=:replace, options...)
+    @test d == Dict(:key1 => 1)
+    @test matchsnap(:key2, 2; options...)
+    @test d == Dict(:key1 => 1, :key2 => 2)
+    @test matchsnap(:key2, 42; on_cmp_false=:replace, options...)
+    @test d == Dict(:key1 => 1, :key2 => 42)
+end
+
 mutable struct DB
     getindex
     haskey
