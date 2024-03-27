@@ -1,5 +1,6 @@
 name: TagBot
 on:
+  # https://discourse.julialang.org/t/ann-required-updates-to-tagbot-yml/49249
   issue_comment:
     types:
       - created

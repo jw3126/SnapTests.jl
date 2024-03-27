@@ -120,7 +120,7 @@ function matchsnap(cmp, snap, value; kw...)
     elseif (on_cmp_false === :return)
         if verbose
             renderdiff(snap, snap_value, value)
-            @info "You might want to try `on_cmp_false=:ask` or `on_cmp_false=:replace`"
+            @info "You might want to set `on_cmp_false` to one of $(ALLOWED_ON_CMP_FALSE)"
         end
         return ispass
     elseif on_cmp_false === :ask
