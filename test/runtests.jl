@@ -22,6 +22,20 @@ end
     @test isfile(path2)
     @test matchsnap(path1, value1)
     @test !matchsnap(path1, value2, verbose=false)
+    @test matchsnap(path1, value2, verbose=false, on_cmp_false=:return_true)
+    @test !matchsnap(path1, value2, verbose=false, on_cmp_false=:return_false)
+    @test !matchsnap(path1, value2, verbose=false, on_cmp_false=:return)
+
+    cmp_error(x,y) = error()
+    load_error(args...) = error()
+    @test matchsnap(cmp_error, path1, value2, on_cmp_error=:return_true)
+    @test !matchsnap(cmp_error, path1, value2, on_cmp_error=:return_false)
+    @test_throws Exception matchsnap(cmp_error, path1, value2)
+
+    @test matchsnap(path1, value2, load=load_error, on_load_error=:return_true)
+    @test !matchsnap(path1, value2, load=load_error, on_load_error=:return_false)
+    @test_throws Exception matchsnap(path1, value2, load=load_error)
+
     @test matchsnap(Returns(true), path1, value2)
     @test !matchsnap(Returns(false), path1, value1, verbose=false)
     @test matchsnap(path2, value2)

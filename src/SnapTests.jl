@@ -9,10 +9,10 @@ function matchsnap(snap, value; kw...)
     matchsnap(cmp, snap, value; kw...)
 end
 
-const ALLOWED_ON_LOAD_ERROR          = (:error, :replace)
-const ALLOWED_ON_CMP_ERROR           = (:error, :replace)
-const ALLOWED_ON_CMP_FALSE           = (:ask, :replace, :return)
-const ALLOWED_ON_SNAP_DOES_NOT_EXIST = (:ask, :save, :error)
+const ALLOWED_ON_LOAD_ERROR          = (:error, :replace, :return_true, :return_false)
+const ALLOWED_ON_CMP_ERROR           = (:error, :replace, :return_true, :return_false)
+const ALLOWED_ON_CMP_FALSE           = (:ask, :replace, :return, :return_true, :return_false)
+const ALLOWED_ON_SNAP_DOES_NOT_EXIST = (:ask, :save, :error, :return_true, :return_false)
 
 """
 Allowed values: $ALLOWED_ON_SNAP_DOES_NOT_EXIST
@@ -44,10 +44,18 @@ function matchsnap(cmp, snap, value; kw...)
         exists,
         renderdiff,
     ) = options
-    @argcheck on_load_error in ALLOWED_ON_LOAD_ERROR
-    @argcheck on_cmp_error in ALLOWED_ON_CMP_ERROR
-    @argcheck on_cmp_false in ALLOWED_ON_CMP_FALSE
-    @argcheck on_snap_does_not_exist in ALLOWED_ON_SNAP_DOES_NOT_EXIST
+    if on_load_error isa Symbol
+        @argcheck on_load_error in ALLOWED_ON_LOAD_ERROR
+    end
+    if on_cmp_error isa Symbol
+        @argcheck on_cmp_error in ALLOWED_ON_CMP_ERROR
+    end
+    if on_cmp_false isa Symbol
+        @argcheck on_cmp_false in ALLOWED_ON_CMP_FALSE
+    end
+    if on_snap_does_not_exist isa Symbol
+        @argcheck on_snap_does_not_exist in ALLOWED_ON_SNAP_DOES_NOT_EXIST
+    end
 
     snap_value = if exists(snap, value)
         try
@@ -55,6 +63,10 @@ function matchsnap(cmp, snap, value; kw...)
         catch err
             if on_load_error === :error
                 rethrow()
+            elseif on_load_error === :return_true
+                return true
+            elseif on_load_error === :return_false
+                return false
             elseif on_load_error === :replace
                 if verbose
                     @info("Replacing snap after load error",
@@ -63,6 +75,8 @@ function matchsnap(cmp, snap, value; kw...)
                 end
                 save(snap, value)
                 load(snap, value)
+            else
+                on_load_error(EventLoadError(snap, value, err))
             end
         end
     elseif on_snap_does_not_exist === :error
@@ -89,6 +103,10 @@ function matchsnap(cmp, snap, value; kw...)
         end
         save(snap, value)
         load(snap, value)
+    elseif on_snap_does_not_exist === :return_true
+        return true
+    elseif on_snap_does_not_exist === :return_false
+        return false
     else
         error("Unreachable")
     end
@@ -109,6 +127,10 @@ function matchsnap(cmp, snap, value; kw...)
             ispass = cmp(snap_value, value)::Bool
         elseif on_cmp_error === :error
             rethrow()
+        elseif on_cmp_error === :return_true
+            return true
+        elseif on_cmp_error === :return_false
+            return false
         else
             error("Unreachable")
         end
@@ -123,6 +145,10 @@ function matchsnap(cmp, snap, value; kw...)
             @info "You might want to set `on_cmp_false` to one of $(ALLOWED_ON_CMP_FALSE)"
         end
         return ispass
+    elseif (on_cmp_false === :return_true)
+        return true
+    elseif (on_cmp_false === :return_false)
+        return false
     elseif on_cmp_false === :ask
         renderdiff(snap, snap_value, value)
         choice = ask_stdin("Replace snap by current value? (y=yes, f=return false, e=error, t=return true)", ["y", "f", "e", "t"])
