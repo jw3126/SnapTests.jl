@@ -1,7 +1,7 @@
 name = "SnapTests"
 uuid = "cedb2ae3-6529-478c-a04f-d9256ac5d41f"
 authors = ["Jan Weidner <jw3126@gmail.com> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
