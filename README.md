@@ -38,6 +38,19 @@ SnapTests.save(l::Lookup, value) = (enterprise_db[l.key] = value)
 @test matchsnap(Lookup(:key2), 3) # fails
 ```
 
+# Tooling
+One drawback of writing values to a file instead of hard coding them in a test is 
+that reading the test is less self contained.
+
+To alleviate this, there are ways for various editors to quickly peek the contents of a file.
+
+## Neovim
+Using [telescope](https://github.com/nvim-telescope/telescope.nvim) one can bind the following to some keys:
+```lua
+require('telescope.builtin').find_files({ default_text=vim.fn.expand('<cfile>')})"
+```
+
+
 # Alternatives
 
 * [ReferenceTests.jl](https://github.com/JuliaTesting/ReferenceTests.jl) 
